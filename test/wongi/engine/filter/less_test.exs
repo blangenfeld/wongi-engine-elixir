@@ -42,4 +42,18 @@ defmodule Wongi.Engine.Filter.LessTest do
 
     assert [] = tokens(rete, ref) |> Enum.to_list()
   end
+
+  test "does not match on nil" do
+    {rete, ref} =
+      new()
+      |> compile_and_get_ref(
+        rule(
+          forall: [
+            less(nil, 1)
+          ]
+        )
+      )
+
+    assert [] = tokens(rete, ref) |> Enum.to_list()
+  end
 end

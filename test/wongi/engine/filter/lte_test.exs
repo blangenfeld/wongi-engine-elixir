@@ -42,4 +42,18 @@ defmodule Wongi.Engine.Filter.LTETest do
 
     assert [] = tokens(rete, ref) |> Enum.to_list()
   end
+
+  test "does not match on nil" do
+    {rete, ref} =
+      new()
+      |> compile_and_get_ref(
+        rule(
+          forall: [
+            lte(nil, 1)
+          ]
+        )
+      )
+
+    assert [] = tokens(rete, ref) |> Enum.to_list()
+  end
 end

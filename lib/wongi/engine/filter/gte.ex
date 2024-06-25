@@ -10,7 +10,10 @@ defmodule Wongi.Engine.Filter.GTE do
     alias Wongi.Engine.Filter.Common
 
     def pass?(%@for{a: a, b: b}, token) do
-      Comp.greater_or_equal?(Common.resolve(a, token), Common.resolve(b, token))
+      with [a, b] <- Enum.map([a, b], &Common.resolve(&1, token)),
+           true <- Enum.all?([a, b]) do
+        Comp.greater_or_equal?(a, b)
+      end
     end
   end
 end
