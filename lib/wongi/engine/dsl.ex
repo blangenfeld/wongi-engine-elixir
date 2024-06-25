@@ -155,6 +155,10 @@ defmodule Wongi.Engine.DSL do
   @spec var(atom()) :: Var.t()
   def var(name), do: Var.new(name)
 
+  @doc "Gets a value from a nested structure referred to by a declared variable."
+  @spec var(atom(), list(atom() | binary() | non_neg_integer())) :: Var.Access.t()
+  def var(name, keys), do: Var.Access.new(name, keys)
+
   @doc "Placeholder variable. Synonym for `:_`."
   def any, do: :_
 
