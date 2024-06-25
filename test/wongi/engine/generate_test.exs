@@ -200,4 +200,24 @@ defmodule Wongi.Engine.GenerateTest do
 
     assert [_token] = tokens(rete, ref) |> Enum.to_list()
   end
+
+  test "generates facts from a nested structure referred to by a declared variable" do
+    clean
+      new()
+      |> compile_and_get_ref(
+        rule(
+          forall: [has(var(:a), :b, var(:c))],
+          do: [gen(var(:a), :second_child_age, var(:c, [:children, 1, :age]))]
+        )
+      )
+
+    asserted = clean |> assert(:a, :b, %{children: [%{age: 15}]})
+    assert [_] = select(asserted, :a, :second_child_age, nil) |> Enum.to_list()
+
+    asserted = clean |> assert(:a, :b, %{children: [%{age: 11}, %{age: 9}]})
+    assert [_] = select(asserted, :a, :second_child_age, 9) |> Enum.to_list()
+
+    asserted = clean |> assert(:a, :b, %{children: [%{age: 15}, %{age: 11}]})
+    assert [_] = select(asserted, :a, :second_child_age, 11) |> Enum.to_list()
+  end
 end

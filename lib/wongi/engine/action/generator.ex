@@ -19,6 +19,7 @@ defmodule Wongi.Engine.Action.Generator do
         |> Enum.map(fn field ->
           case template[field] do
             %Var{name: name} -> token[name]
+            %Var.Access{name: name, keys: keys} -> token[name] |> Var.Access.extract(keys)
             literal -> literal
           end
         end)
