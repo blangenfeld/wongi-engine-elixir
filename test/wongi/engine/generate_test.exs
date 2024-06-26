@@ -24,6 +24,20 @@ defmodule Wongi.Engine.GenerateTest do
     assert clean == retracted
   end
 
+  test "generates facts from accessing var data" do
+    clean =
+      new()
+      |> compile(
+        rule(
+          forall: [has(var(:x), :y, var(:z))],
+          do: [gen(var(:x), :generated, var(:z, [:a, 1, :b]))]
+        )
+      )
+
+    asserted = clean |> assert(:x, :y, %{a: [%{b: 123}, %{b: 42}]})
+    assert [_] = select(asserted, :x, :generated, 42) |> Enum.to_list()
+  end
+
   test "generates symmetric facts" do
     rete =
       new()

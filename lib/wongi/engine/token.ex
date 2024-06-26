@@ -26,7 +26,7 @@ defmodule Wongi.Engine.Token do
   @doc "Returns the value of a bound variable."
   @spec fetch(t(), atom()) :: {:ok, any()} | :error
   def fetch(%__MODULE__{assignments: assignments, parents: parents}, var) do
-    case Map.fetch(assignments, var) do
+    case fetch_var(assignments, var) do
       {:ok, _value} = ok ->
         ok
 
@@ -40,13 +40,19 @@ defmodule Wongi.Engine.Token do
     end
   end
 
+  defp fetch_var(assignments, {var, keys}) when is_map_key(assignments, var),
+    do: {:ok, Wongi.Engine.DSL.Var.extract_path(assignments, [var | keys])}
+
+  defp fetch_var(_assignments, {_var, _keys}), do: :error
+  defp fetch_var(assignments, var), do: Map.fetch(assignments, var)
+
   @doc false
   def fetch(
         %__MODULE__{} = token,
         var,
         extra_assignments
       ) do
-    case Map.fetch(extra_assignments, var) do
+    case fetch_var(extra_assignments, var) do
       {:ok, value} ->
         {:ok, value}
 

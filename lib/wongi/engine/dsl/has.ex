@@ -29,9 +29,9 @@ defmodule Wongi.Engine.DSL.Has do
         [:subject, :predicate, :object]
         |> Enum.reduce({context, %{}, %{}}, fn field, {context, tests, assignments} = acc ->
           case Map.get(clause, field) do
-            %Var{name: var} ->
+            %Var{name: var, keys: keys} ->
               if MapSet.member?(context.variables, var) do
-                {context, Map.put(tests, field, var), assignments}
+                {context, Map.put(tests, field, {var, keys}), assignments}
               else
                 context = context |> declare_variable(var)
                 {context, tests, Map.put(assignments, field, var)}

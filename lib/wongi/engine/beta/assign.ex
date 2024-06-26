@@ -1,5 +1,7 @@
 defmodule Wongi.Engine.Beta.Assign do
   @moduledoc false
+  alias Wongi.Engine.DSL.Var
+
   @type t() :: %__MODULE__{}
   defstruct [:ref, :parent_ref, :name, :value]
 
@@ -16,6 +18,7 @@ defmodule Wongi.Engine.Beta.Assign do
   def evaluate(fun, _, _) when is_function(fun, 0), do: fun.()
   def evaluate(fun, token, _) when is_function(fun, 1), do: fun.(token)
   def evaluate(fun, token, rete) when is_function(fun, 2), do: fun.(token, rete)
+  def evaluate(%Var{name: name, keys: keys}, token, _), do: token[{name, keys}]
   def evaluate(value, _, _), do: value
 
   defimpl Wongi.Engine.Beta do

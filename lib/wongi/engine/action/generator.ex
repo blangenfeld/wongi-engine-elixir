@@ -18,7 +18,7 @@ defmodule Wongi.Engine.Action.Generator do
         [:subject, :predicate, :object]
         |> Enum.map(fn field ->
           case template[field] do
-            %Var{name: name} -> token[name]
+            %Var{name: name, keys: keys} -> token[{name, keys}]
             literal -> literal
           end
         end)

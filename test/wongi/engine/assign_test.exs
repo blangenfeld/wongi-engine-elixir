@@ -16,6 +16,38 @@ defmodule Wongi.Engine.AssignTest do
     assert 42 = token[:x]
   end
 
+  test "assigns a value from a var" do
+    {rete, ref} =
+      new()
+      |> compile_and_get_ref(
+        rule(
+          forall: [
+            assign(:x, 42),
+            assign(:y, var(:x))
+          ]
+        )
+      )
+
+    assert [token] = rete |> tokens(ref) |> Enum.to_list()
+    assert 42 = token[:y]
+  end
+
+  test "assigns a value at a path inside a var value" do
+    {rete, ref} =
+      new()
+      |> compile_and_get_ref(
+        rule(
+          forall: [
+            assign(:x, [1, 2, 3]),
+            assign(:y, var(:x, 2))
+          ]
+        )
+      )
+
+    assert [token] = rete |> tokens(ref) |> Enum.to_list()
+    assert 3 = token[:y]
+  end
+
   test "assigns a calculated value (nullary callback)" do
     {rete, ref} =
       new()

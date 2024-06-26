@@ -137,6 +137,31 @@ defmodule Wongi.Engine.HasTest do
     assert :c = token[:x]
   end
 
+  test "matches with accessing bound variables" do
+    {rete, ref} =
+      new()
+      |> compile_and_get_ref(
+        rule(
+          forall: [
+            has(:a, :b, var(:x)),
+            has(var(:x, :y), :d, :e)
+          ]
+        )
+      )
+
+    rete =
+      rete
+      |> assert(:a, :b, %{y: :c})
+      |> assert(:c, :d, :e)
+
+    assert [token] =
+             rete
+             |> tokens(ref)
+             |> MapSet.to_list()
+
+    assert :c = token[{:x, [:y]}]
+  end
+
   test "matches with bound variables when asserted from bottom up" do
     {rete, ref} =
       new()

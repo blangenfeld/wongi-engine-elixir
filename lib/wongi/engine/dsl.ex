@@ -155,6 +155,10 @@ defmodule Wongi.Engine.DSL do
   @spec var(atom()) :: Var.t()
   def var(name), do: Var.new(name)
 
+  @doc "Variable access."
+  @spec var(atom(), Var.key() | list(Var.key())) :: Var.t()
+  def var(name, keys), do: Var.new(name, List.wrap(keys))
+
   @doc "Placeholder variable. Synonym for `:_`."
   def any, do: :_
 
